@@ -1,2 +1,2 @@
 
-<h2>Backend</h2>
+<h2>Backend (Developed together with the internship team)</h2>

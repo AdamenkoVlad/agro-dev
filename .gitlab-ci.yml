@@ -1,0 +1,29 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_NAME: baza-agro
+  CONTAINER_NAME: baza-agro-container
+
+build:
+  stage: build
+  image: maven:3.8.1-openjdk-17
+  tags:
+    - deploy-agro
+  script:
+    - mvn package -Dmaven.test.skip
+    - docker --version
+    - sudo docker build -t $IMAGE_NAME .
+  artifacts:
+    paths:
+      - target/
+
+deploy:
+  stage: deploy
+  tags:
+    - deploy-agro
+  image: docker:19.03.12
+  script:
+    - sudo docker rm -f $CONTAINER_NAME || true # Safely remove any existing container
+    - sudo docker run -d --restart unless-stopped --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME
